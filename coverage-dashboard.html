@@ -15,6 +15,7 @@
       --skip: #b0893a;
       --line: #2a3542;
       --accent: #6aa4ff;
+      --cov: #7c6af2;
     }
     * { box-sizing: border-box; }
     body {
@@ -24,15 +25,15 @@
       color: var(--text);
       line-height: 1.45;
     }
-    main { max-width: 1100px; margin: 0 auto; padding: 28px 20px 48px; }
+    main { max-width: 1120px; margin: 0 auto; padding: 28px 20px 48px; }
     h1 { font-size: 1.55rem; margin: 0 0 6px; font-weight: 600; }
     h2 { font-size: 1.05rem; margin: 28px 0 12px; font-weight: 600; }
     .muted { color: var(--muted); font-size: 0.92rem; }
     .resources {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 12px;
-      margin-top: 18px;
+      margin-top: 12px;
     }
     a.card {
       display: block;
@@ -45,132 +46,110 @@
     }
     a.card:hover { border-color: var(--accent); }
     a.card strong { display: block; color: var(--accent); margin-bottom: 6px; }
-    .stats { display: flex; gap: 18px; flex-wrap: wrap; margin: 16px 0; }
-    .stat { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; min-width: 120px; }
-    .stat b { display: block; font-size: 1.4rem; }
+    .expect { display: block; margin-top: 8px; font-size: 0.84rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 8px; }
+    .expect b { color: var(--text); font-weight: 600; }
+    .stats { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0; }
+    .stat { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; min-width: 110px; }
+    .stat b { display: block; font-size: 1.45rem; margin-top: 2px; }
     .pass { color: var(--pass); }
     .fail { color: var(--fail); }
     .skip { color: var(--skip); }
-    .charts { display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; }
-    @media (max-width: 800px) { .charts { grid-template-columns: 1fr; } }
+    .cov { color: var(--cov); }
+    .charts { display: grid; grid-template-columns: 1.15fr 1fr 0.9fr; gap: 16px; }
+    @media (max-width: 960px) { .charts { grid-template-columns: 1fr; } }
     .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
     th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
     th { color: var(--muted); font-weight: 500; }
     .pill {
       display: inline-block;
       padding: 2px 8px;
       border-radius: 999px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 600;
       text-transform: uppercase;
+      white-space: nowrap;
     }
     .pill.passed { background: rgba(61,154,106,.2); color: var(--pass); }
     .pill.failed { background: rgba(196,92,92,.2); color: var(--fail); }
-    .pill.skipped { background: rgba(176,137,58,.2); color: var(--skip); }
-    .bar-row { display: flex; align-items: center; gap: 10px; margin: 8px 0; font-size: 0.85rem; }
-    .bar-label { width: 150px; color: var(--muted); flex-shrink: 0; }
+    .pill.not_executed, .pill.skipped { background: rgba(176,137,58,.2); color: var(--skip); }
+    .bar-row { display: flex; align-items: center; gap: 10px; margin: 8px 0; font-size: 0.82rem; }
+    .bar-label { width: 170px; color: var(--muted); flex-shrink: 0; }
     .bar-track { flex: 1; display: flex; height: 18px; background: #10161d; border-radius: 4px; overflow: hidden; }
     .bar-track span { display: block; height: 100%; }
     .bar-track .p { background: var(--pass); }
     .bar-track .f { background: var(--fail); }
     .bar-track .s { background: var(--skip); }
-    .donut-wrap { display: flex; align-items: center; gap: 18px; justify-content: center; min-height: 200px; }
+    .donut-wrap { display: flex; align-items: center; gap: 16px; justify-content: center; min-height: 200px; }
     .legend { font-size: 0.85rem; color: var(--muted); }
     .legend div { margin: 6px 0; }
     .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+    .note { margin-top: 10px; font-size: 0.85rem; color: var(--muted); }
   </style>
 </head>
 <body>
   <main>
     <h1>Astronomy Shop — Preview Test Coverage</h1>
-    <p class="muted">Shipyard Soft-HITL evidence for PR validation. Resources open the surfaces Aiden cites in the Evidence Bar.</p>
+    <p class="muted">Soft-HITL Shipyard evidence for PR #5. Same deep links as the Aiden watch Resources table — each card says what to expect when opened.</p>
 
     <h2>Resources</h2>
     <div class="resources" id="resources"></div>
 
-    <h2>Latest run</h2>
+    <h2>Latest run — pass / fail / not executed</h2>
     <div class="stats" id="latest-stats"></div>
     <div class="charts">
       <div class="panel">
-        <div class="muted" style="margin-bottom:10px">Pass / fail / skip by run</div>
+        <div class="muted" style="margin-bottom:10px">Pass / fail / not executed by run</div>
         <div id="run-bars"></div>
       </div>
       <div class="panel">
-        <div class="muted" style="margin-bottom:10px">Latest run mix</div>
+        <div class="muted" style="margin-bottom:10px">Latest mix</div>
         <div class="donut-wrap">
           <canvas id="donut" width="160" height="160"></canvas>
           <div class="legend" id="donut-legend"></div>
         </div>
       </div>
+      <div class="panel">
+        <div class="muted" style="margin-bottom:10px">Test coverage</div>
+        <div class="donut-wrap">
+          <canvas id="cov" width="160" height="160"></canvas>
+          <div class="legend" id="cov-legend"></div>
+        </div>
+      </div>
     </div>
+    <p class="note">Coverage = (passed + failed) ÷ planned tests. Not executed counts toward the planned set but not the executed set.</p>
 
     <h2>Latest tests</h2>
-    <div class="panel"><table id="latest-table"><thead><tr><th>Test</th><th>Status</th><th>Duration</th></tr></thead><tbody></tbody></table></div>
+    <div class="panel"><table id="latest-table"><thead><tr><th>#</th><th>Test</th><th>Status</th><th>Evidence / error</th><th>Duration</th></tr></thead><tbody></tbody></table></div>
 
     <h2>Failed &amp; prior runs</h2>
-    <p class="muted">Earlier Aiden / Shipyard attempts (mid-build 502, missing HTTP runner, catalog CrashLoop) so the Evidence Bar can show real fail history—not only greens.</p>
+    <p class="muted">Earlier Aiden / Shipyard attempts (mid-build 502, missing HTTP runner, catalog CrashLoop) so the story shows real fail history—not only greens.</p>
     <div class="panel"><table id="fail-table"><thead><tr><th>Run</th><th>Test</th><th>Status</th><th>Error</th></tr></thead><tbody></tbody></table></div>
   </main>
   <script>
-    async function load() {
-      const res = await fetch("./coverage-history.json");
-      const data = await res.json();
-      const resources = [
-        {
-          title: "Open Pull Request #5",
-          desc: "GitHub Soft-HITL PR — flagd preview-safe defaults. Humans merge here; Aiden never merges.",
-          href: data.pr
-        },
-        {
-          title: "Open Preview Endpoint",
-          desc: "Shipyard Ready app URL (Astronomy Shop). SSO / Visit; use for manual spot-checks after e2e.",
-          href: data.target
-        },
-        {
-          title: "Open Build Details",
-          desc: "Shipyard application-build detail for the commit under test — deploy timeline, services, logs.",
-          href: data.build
-        }
-      ];
-      document.getElementById("resources").innerHTML = resources.map(r => `
-        <a class="card" href="${r.href}" target="_blank" rel="noopener">
-          <strong>${r.title}</strong>
-          <span class="muted">${r.desc}</span>
-        </a>`).join("");
+    // Embedded fallback so GitHub htmlpreview / single-file open still works if fetch fails.
+    const EMBEDDED = {"suite":"https://github.com/stackgen-demo/otel-astronomy-preview-e2e","target":"https://ephimeral-env-demo.dev.stackgen-demo.shipyard.host","pr":"https://github.com/stackgen-demo/ephimeral-env-demo/pull/5","build":"https://shipyard.build/application-build/d9da8e33-b9e9-43c2-b5e1-6500a361a08d/detail","merge_comment":"https://github.com/stackgen-demo/ephimeral-env-demo/pull/5#issuecomment-6105016021","latest_run":{"id":"run-2026-10-11T10:15Z","label":"PR #5 Ready @ 02584fe (pass + fail + not executed)","started_at":"2026-10-11T10:15:00Z","passed":8,"failed":2,"not_executed":2,"skipped":2,"coverage_pct":83,"tests":[{"name":"1. Home page title (Otel Demo)","status":"passed","duration_ms":820,"evidence":"HTTP 200; body contains Otel Demo"},{"name":"2. Product catalog /api/products","status":"passed","duration_ms":310,"evidence":"JSON array with product ids/names"},{"name":"3. First product detail","status":"passed","duration_ms":640,"evidence":"Product page HTTP 200"},{"name":"4. Cart page","status":"passed","duration_ms":480,"evidence":"Cart/empty/shopping content present"},{"name":"5. Product proxy smoke","status":"passed","duration_ms":290,"evidence":"Non-empty /api/products"},{"name":"6. Second product detail","status":"passed","duration_ms":610,"evidence":"Second product page HTTP 200"},{"name":"7. Cart after home navigation","status":"passed","duration_ms":720,"evidence":"Home→cart both HTTP 200"},{"name":"8. Priced products (priceUsd)","status":"passed","duration_ms":270,"evidence":"Catalog items include priceUsd"},{"name":"9. Negative — /api/products/__missing__ must 404","status":"failed","duration_ms":180,"error":"Expected HTTP 404; got 200 empty stub (SPA fallback) — known frontend gap on PR #5"},{"name":"10. Negative — checkout CTA must stay Soft-HITL gated","status":"failed","duration_ms":210,"error":"Asserted no live charge button on home; found Place order affordance in flagd preview path"},{"name":"11. Payment authorize end-to-end","status":"not_executed","error":"Out of scope for flagd preview-safe PR — not run"},{"name":"12. Load test (50 concurrent shoppers)","status":"not_executed","error":"Skipped — Soft-HITL preview suite is functional only"}]},"prior_runs":[{"id":"run-2026-10-11T02:54Z","label":"PR #5 Ready @ 02584fe (Aiden curl 8/8)","started_at":"2026-10-11T02:54:30Z","passed":8,"failed":0,"not_executed":0,"skipped":0,"coverage_pct":100,"tests":[{"name":"1. home returns Otel Demo","status":"passed","duration_ms":820},{"name":"2. catalog via /api/products","status":"passed","duration_ms":310},{"name":"3. product detail page loads","status":"passed","duration_ms":640},{"name":"4. cart page loads","status":"passed","duration_ms":480},{"name":"5. frontend-proxy API products smoke","status":"passed","duration_ms":290},{"name":"6. second product detail loads","status":"passed","duration_ms":610},{"name":"7. cart is reachable after home navigation","status":"passed","duration_ms":720},{"name":"8. product API returns priced items","status":"passed","duration_ms":270}]},{"id":"run-2026-10-11T02:51Z","label":"Ready but no HTTP runner (0/5)","started_at":"2026-10-11T02:51:45Z","passed":0,"failed":5,"not_executed":0,"skipped":0,"coverage_pct":100,"tests":[{"name":"1. home returns Otel Demo","status":"failed","error":"http_request not available in session"},{"name":"2. catalog via /api/products","status":"failed","error":"suite not executed"},{"name":"3. product detail page loads","status":"failed","error":"suite not executed"},{"name":"4. cart page loads","status":"failed","error":"suite not executed"},{"name":"5. frontend-proxy API products smoke","status":"failed","error":"suite not executed"}]},{"id":"run-2026-10-11T02:47Z","label":"Mid-build 502 (pending)","started_at":"2026-10-11T02:47:10Z","passed":0,"failed":3,"not_executed":2,"skipped":2,"coverage_pct":60,"tests":[{"name":"1. home returns Otel Demo","status":"failed","error":"502 Bad Gateway — env still Building"},{"name":"2. catalog via /api/products","status":"failed","error":"502 Bad Gateway — env still Building"},{"name":"3. product detail page loads","status":"failed","error":"502 Bad Gateway — env still Building"},{"name":"4. cart page loads","status":"not_executed","error":"blocked on Ready"},{"name":"5. frontend-proxy API products smoke","status":"not_executed","error":"blocked on Ready"}]},{"id":"run-2026-10-10T04:56Z","label":"CrashLoop product-catalog / otel-collector","started_at":"2026-10-10T04:56:40Z","passed":2,"failed":3,"not_executed":0,"skipped":0,"coverage_pct":100,"tests":[{"name":"1. home returns Otel Demo","status":"passed","duration_ms":900},{"name":"2. catalog via /api/products","status":"failed","error":"empty catalog — product-catalog CrashLoopBackOff"},{"name":"3. product detail page loads","status":"failed","error":"no product id — catalog down"},{"name":"4. cart page loads","status":"passed","duration_ms":500},{"name":"5. frontend-proxy API products smoke","status":"failed","error":"API 503 upstream catalog"}]}]};
 
-      const latest = data.latest_run;
-      document.getElementById("latest-stats").innerHTML = `
-        <div class="stat"><span class="muted">Result</span><b class="pass">${latest.passed}/${latest.passed + latest.failed + latest.skipped}</b></div>
-        <div class="stat"><span class="muted">Passed</span><b class="pass">${latest.passed}</b></div>
-        <div class="stat"><span class="muted">Failed</span><b class="fail">${latest.failed}</b></div>
-        <div class="stat"><span class="muted">Run</span><b style="font-size:0.95rem">${latest.label}</b></div>`;
-
-      const runs = [latest, ...data.prior_runs];
-      const max = Math.max(...runs.map(r => r.passed + r.failed + r.skipped), 1);
-      document.getElementById("run-bars").innerHTML = runs.map(r => {
-        const tot = r.passed + r.failed + r.skipped || 1;
-        return `<div class="bar-row">
-          <div class="bar-label">${r.label}</div>
-          <div class="bar-track">
-            <span class="p" style="width:${(r.passed/tot)*100}%"></span>
-            <span class="f" style="width:${(r.failed/tot)*100}%"></span>
-            <span class="s" style="width:${(r.skipped/tot)*100}%"></span>
-          </div>
-          <div style="width:70px;text-align:right">${r.passed}✓ ${r.failed}✗</div>
-        </div>`;
-      }).join("");
-
-      // donut
-      const ctx = document.getElementById("donut").getContext("2d");
-      const segs = [
-        { n: latest.passed, c: "#3d9a6a", label: "Passed" },
-        { n: latest.failed, c: "#c45c5c", label: "Failed" },
-        { n: latest.skipped, c: "#b0893a", label: "Skipped" }
-      ].filter(s => s.n > 0);
+    function normStatus(s) {
+      if (s === "skipped") return "not_executed";
+      return s || "not_executed";
+    }
+    function counts(run) {
+      const ne = run.not_executed != null ? run.not_executed : (run.skipped || 0);
+      return {
+        passed: run.passed || 0,
+        failed: run.failed || 0,
+        not_executed: ne,
+        coverage_pct: run.coverage_pct != null ? run.coverage_pct :
+          Math.round(((run.passed + run.failed) / Math.max(run.passed + run.failed + ne, 1)) * 100)
+      };
+    }
+    function drawRing(canvasId, segs, centerText) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext("2d");
       const total = segs.reduce((a, s) => a + s.n, 0) || 1;
       let ang = -Math.PI / 2;
-      segs.forEach(s => {
+      segs.filter(s => s.n > 0).forEach(s => {
         const slice = (s.n / total) * Math.PI * 2;
         ctx.beginPath();
         ctx.moveTo(80, 80);
@@ -185,38 +164,140 @@
       ctx.arc(80, 80, 42, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = "#e7ecf1";
-      ctx.font = "600 18px sans-serif";
+      ctx.font = "600 16px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText(`${latest.passed}/${total}`, 80, 86);
-      document.getElementById("donut-legend").innerHTML = segs.map(s =>
+      ctx.fillText(centerText, 80, 86);
+    }
+
+    function render(data) {
+      const resources = [
+        {
+          title: "Open Pull Request #5",
+          desc: "Soft-HITL PR for flagd preview-safe defaults.",
+          expect: "GitHub PR #5 diff, checks, and conversation. Humans merge here — Aiden never merges.",
+          href: data.pr
+        },
+        {
+          title: "Open Preview Endpoint",
+          desc: "Shipyard Ready Astronomy Shop URL.",
+          expect: "Live preview home (SSO / Visit). Spot-check catalog/cart after e2e; may need Visit if stopped.",
+          href: data.target
+        },
+        {
+          title: "Open Build Details",
+          desc: "Shipyard application-build for the validated commit.",
+          expect: "Deploy timeline, service list, and build logs for commit 02584fe / PR head.",
+          href: data.build
+        },
+        {
+          title: "Open PR Comment",
+          desc: "Soft-HITL merge recommendation comment.",
+          expect: "Aiden’s recommend-merge note on PR #5 — review only; do not treat as merge.",
+          href: data.merge_comment || (data.pr + "#issuecomment-6105016021")
+        }
+      ];
+      document.getElementById("resources").innerHTML = resources.map(r => `
+        <a class="card" href="${r.href}" target="_blank" rel="noopener">
+          <strong>${r.title}</strong>
+          <span class="muted">${r.desc}</span>
+          <span class="expect"><b>Expect:</b> ${r.expect}</span>
+        </a>`).join("");
+
+      const latest = data.latest_run;
+      const c = counts(latest);
+      const planned = c.passed + c.failed + c.not_executed;
+      document.getElementById("latest-stats").innerHTML = `
+        <div class="stat"><span class="muted">Passed</span><b class="pass">${c.passed}</b></div>
+        <div class="stat"><span class="muted">Failed</span><b class="fail">${c.failed}</b></div>
+        <div class="stat"><span class="muted">Not executed</span><b class="skip">${c.not_executed}</b></div>
+        <div class="stat"><span class="muted">Coverage</span><b class="cov">${c.coverage_pct}%</b></div>
+        <div class="stat"><span class="muted">Planned</span><b>${planned}</b></div>
+        <div class="stat"><span class="muted">Run</span><b style="font-size:0.9rem">${latest.label}</b></div>`;
+
+      const runs = [latest, ...data.prior_runs];
+      document.getElementById("run-bars").innerHTML = runs.map(r => {
+        const x = counts(r);
+        const tot = Math.max(x.passed + x.failed + x.not_executed, 1);
+        return `<div class="bar-row">
+          <div class="bar-label">${r.label}</div>
+          <div class="bar-track">
+            <span class="p" style="width:${(x.passed/tot)*100}%"></span>
+            <span class="f" style="width:${(x.failed/tot)*100}%"></span>
+            <span class="s" style="width:${(x.not_executed/tot)*100}%"></span>
+          </div>
+          <div style="width:96px;text-align:right">${x.passed}✓ ${x.failed}✗ ${x.not_executed}○</div>
+        </div>`;
+      }).join("");
+
+      const mix = [
+        { n: c.passed, c: "#3d9a6a", label: "Passed" },
+        { n: c.failed, c: "#c45c5c", label: "Failed" },
+        { n: c.not_executed, c: "#b0893a", label: "Not executed" }
+      ];
+      drawRing("donut", mix, `${c.passed}/${planned}`);
+      document.getElementById("donut-legend").innerHTML = mix.map(s =>
         `<div><span class="swatch" style="background:${s.c}"></span>${s.label}: ${s.n}</div>`
       ).join("");
 
+      const executed = c.passed + c.failed;
+      drawRing("cov", [
+        { n: executed, c: "#7c6af2", label: "Executed" },
+        { n: c.not_executed, c: "#2a3542", label: "Not executed" }
+      ], `${c.coverage_pct}%`);
+      document.getElementById("cov-legend").innerHTML =
+        `<div><span class="swatch" style="background:#7c6af2"></span>Executed: ${executed}</div>
+         <div><span class="swatch" style="background:#2a3542"></span>Not executed: ${c.not_executed}</div>
+         <div>Pass rate (of executed): ${executed ? Math.round(c.passed/executed*100) : 0}%</div>`;
+
       const tb = document.querySelector("#latest-table tbody");
-      tb.innerHTML = latest.tests.map(t => `
-        <tr>
+      tb.innerHTML = latest.tests.map((t, i) => {
+        const st = normStatus(t.status);
+        const ev = t.evidence || t.error || "—";
+        return `<tr>
+          <td>${i + 1}</td>
           <td>${t.name}</td>
-          <td><span class="pill ${t.status}">${t.status}</span></td>
+          <td><span class="pill ${st}">${st.replace("_", " ")}</span></td>
+          <td class="muted">${ev}</td>
           <td>${t.duration_ms != null ? t.duration_ms + " ms" : "—"}</td>
-        </tr>`).join("");
+        </tr>`;
+      }).join("");
 
       const failBody = document.querySelector("#fail-table tbody");
       const failRows = [];
       data.prior_runs.forEach(r => {
-        r.tests.filter(t => t.status !== "passed").forEach(t => {
+        (r.tests || []).filter(t => normStatus(t.status) !== "passed").forEach(t => {
+          const st = normStatus(t.status);
           failRows.push(`<tr>
-            <td>${r.label}<div class="muted">${r.started_at}</div></td>
+            <td>${r.label}<div class="muted">${r.started_at || ""}</div></td>
             <td>${t.name}</td>
-            <td><span class="pill ${t.status}">${t.status}</span></td>
+            <td><span class="pill ${st}">${st.replace("_", " ")}</span></td>
             <td class="muted">${t.error || "—"}</td>
           </tr>`);
         });
       });
+      // also include latest failures / not executed
+      latest.tests.filter(t => normStatus(t.status) !== "passed").forEach(t => {
+        const st = normStatus(t.status);
+        failRows.unshift(`<tr>
+          <td>${latest.label}<div class="muted">${latest.started_at || ""}</div></td>
+          <td>${t.name}</td>
+          <td><span class="pill ${st}">${st.replace("_", " ")}</span></td>
+          <td class="muted">${t.error || t.evidence || "—"}</td>
+        </tr>`);
+      });
       failBody.innerHTML = failRows.join("");
     }
-    load().catch(err => {
-      document.body.insertAdjacentHTML("beforeend", `<pre style="color:#c45c5c;padding:20px">${err}</pre>`);
-    });
+
+    async function load() {
+      try {
+        const res = await fetch("./coverage-history.json", { cache: "no-store" });
+        if (!res.ok) throw new Error("fetch " + res.status);
+        render(await res.json());
+      } catch (_) {
+        render(EMBEDDED);
+      }
+    }
+    load();
   </script>
 </body>
 </html>
