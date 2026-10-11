@@ -1,0 +1,12 @@
+{
+  "name": "otel-astronomy-preview-e2e",
+  "private": true,
+  "description": "5-test Playwright suite for OpenTelemetry Astronomy Shop on Shipyard previews",
+  "scripts": {
+    "test": "playwright test",
+    "test:coverage": "playwright test --reporter=list,json && node scripts/write-coverage-summary.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  }
+}
