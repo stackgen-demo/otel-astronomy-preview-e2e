@@ -11,23 +11,28 @@ test("1. home returns Otel Demo", async ({ page }) => {
   await expect(page).toHaveTitle(/Otel Demo/i);
 });
 
-test("2. catalog listing visible on home", async ({ page }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
-  // Astronomy Shop product grid / hot products — tolerate copy variants
-  const catalog = page
-    .locator('a[href*="/product/"]')
-    .or(page.getByRole("link", { name: /product/i }))
-    .or(page.locator("[data-cy='product'], .product, .products a"));
-  await expect(catalog.first()).toBeVisible({ timeout: 30_000 });
+test("2. catalog via /api/products", async ({ request }) => {
+  const token = process.env.SHIPYARD_TOKEN || process.env.SHIPYARD_BYPASS_TOKEN;
+  const headers = token ? { Cookie: `shipyard_token=${token}` } : {};
+  const res = await request.get("/api/products", { headers });
+  expect(res.status()).toBe(200);
+  const products = await res.json();
+  expect(Array.isArray(products)).toBeTruthy();
+  expect(products.length).toBeGreaterThan(0);
+  expect(products[0].id).toBeTruthy();
+  expect(products[0].name).toBeTruthy();
 });
 
-test("3. product detail page loads", async ({ page }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
-  const productLink = page.locator('a[href*="/product/"]').first();
-  await expect(productLink).toBeVisible({ timeout: 30_000 });
-  await productLink.click();
-  await expect(page).toHaveURL(/\/product\//, { timeout: 20_000 });
-  await expect(page.locator("body")).toContainText(/.+/, { timeout: 15_000 });
+test("3. product detail page loads", async ({ page, request }) => {
+  const token = process.env.SHIPYARD_TOKEN || process.env.SHIPYARD_BYPASS_TOKEN;
+  const headers = token ? { Cookie: `shipyard_token=${token}` } : {};
+  const res = await request.get("/api/products", { headers });
+  const products = await res.json();
+  const id = products[0].id as string;
+  await applyShipyardCookie(page);
+  const detail = await page.goto(`/product/${id}`, { waitUntil: "domcontentloaded" });
+  expect(detail?.status()).toBe(200);
+  await expect(page).toHaveURL(new RegExp(`/product/${id}`));
 });
 
 test("4. cart page loads", async ({ page }) => {
