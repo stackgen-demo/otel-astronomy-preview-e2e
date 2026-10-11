@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Astronomy Shop — Preview Test Coverage</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --panel: #1a222c;
+      --text: #e7ecf1;
+      --muted: #9aa7b5;
+      --pass: #3d9a6a;
+      --fail: #c45c5c;
+      --skip: #b0893a;
+      --line: #2a3542;
+      --accent: #6aa4ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+    main { max-width: 1100px; margin: 0 auto; padding: 28px 20px 48px; }
+    h1 { font-size: 1.55rem; margin: 0 0 6px; font-weight: 600; }
+    h2 { font-size: 1.05rem; margin: 28px 0 12px; font-weight: 600; }
+    .muted { color: var(--muted); font-size: 0.92rem; }
+    .resources {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+    a.card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    a.card:hover { border-color: var(--accent); }
+    a.card strong { display: block; color: var(--accent); margin-bottom: 6px; }
+    .stats { display: flex; gap: 18px; flex-wrap: wrap; margin: 16px 0; }
+    .stat { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; min-width: 120px; }
+    .stat b { display: block; font-size: 1.4rem; }
+    .pass { color: var(--pass); }
+    .fail { color: var(--fail); }
+    .skip { color: var(--skip); }
+    .charts { display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; }
+    @media (max-width: 800px) { .charts { grid-template-columns: 1fr; } }
+    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-weight: 500; }
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .pill.passed { background: rgba(61,154,106,.2); color: var(--pass); }
+    .pill.failed { background: rgba(196,92,92,.2); color: var(--fail); }
+    .pill.skipped { background: rgba(176,137,58,.2); color: var(--skip); }
+    .bar-row { display: flex; align-items: center; gap: 10px; margin: 8px 0; font-size: 0.85rem; }
+    .bar-label { width: 150px; color: var(--muted); flex-shrink: 0; }
+    .bar-track { flex: 1; display: flex; height: 18px; background: #10161d; border-radius: 4px; overflow: hidden; }
+    .bar-track span { display: block; height: 100%; }
+    .bar-track .p { background: var(--pass); }
+    .bar-track .f { background: var(--fail); }
+    .bar-track .s { background: var(--skip); }
+    .donut-wrap { display: flex; align-items: center; gap: 18px; justify-content: center; min-height: 200px; }
+    .legend { font-size: 0.85rem; color: var(--muted); }
+    .legend div { margin: 6px 0; }
+    .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Astronomy Shop — Preview Test Coverage</h1>
+    <p class="muted">Shipyard Soft-HITL evidence for PR validation. Resources open the surfaces Aiden cites in the Evidence Bar.</p>
+
+    <h2>Resources</h2>
+    <div class="resources" id="resources"></div>
+
+    <h2>Latest run</h2>
+    <div class="stats" id="latest-stats"></div>
+    <div class="charts">
+      <div class="panel">
+        <div class="muted" style="margin-bottom:10px">Pass / fail / skip by run</div>
+        <div id="run-bars"></div>
+      </div>
+      <div class="panel">
+        <div class="muted" style="margin-bottom:10px">Latest run mix</div>
+        <div class="donut-wrap">
+          <canvas id="donut" width="160" height="160"></canvas>
+          <div class="legend" id="donut-legend"></div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Latest tests</h2>
+    <div class="panel"><table id="latest-table"><thead><tr><th>Test</th><th>Status</th><th>Duration</th></tr></thead><tbody></tbody></table></div>
+
+    <h2>Failed &amp; prior runs</h2>
+    <p class="muted">Earlier Aiden / Shipyard attempts (mid-build 502, missing HTTP runner, catalog CrashLoop) so the Evidence Bar can show real fail history—not only greens.</p>
+    <div class="panel"><table id="fail-table"><thead><tr><th>Run</th><th>Test</th><th>Status</th><th>Error</th></tr></thead><tbody></tbody></table></div>
+  </main>
+  <script>
+    async function load() {
+      const res = await fetch("./coverage-history.json");
+      const data = await res.json();
+      const resources = [
+        {
+          title: "Open Pull Request #5",
+          desc: "GitHub Soft-HITL PR — flagd preview-safe defaults. Humans merge here; Aiden never merges.",
+          href: data.pr
+        },
+        {
+          title: "Open Preview Endpoint",
+          desc: "Shipyard Ready app URL (Astronomy Shop). SSO / Visit; use for manual spot-checks after e2e.",
+          href: data.target
+        },
+        {
+          title: "Open Build Details",
+          desc: "Shipyard application-build detail for the commit under test — deploy timeline, services, logs.",
+          href: data.build
+        }
+      ];
+      document.getElementById("resources").innerHTML = resources.map(r => `
+        <a class="card" href="${r.href}" target="_blank" rel="noopener">
+          <strong>${r.title}</strong>
+          <span class="muted">${r.desc}</span>
+        </a>`).join("");
+
+      const latest = data.latest_run;
+      document.getElementById("latest-stats").innerHTML = `
+        <div class="stat"><span class="muted">Result</span><b class="pass">${latest.passed}/${latest.passed + latest.failed + latest.skipped}</b></div>
+        <div class="stat"><span class="muted">Passed</span><b class="pass">${latest.passed}</b></div>
+        <div class="stat"><span class="muted">Failed</span><b class="fail">${latest.failed}</b></div>
+        <div class="stat"><span class="muted">Run</span><b style="font-size:0.95rem">${latest.label}</b></div>`;
+
+      const runs = [latest, ...data.prior_runs];
+      const max = Math.max(...runs.map(r => r.passed + r.failed + r.skipped), 1);
+      document.getElementById("run-bars").innerHTML = runs.map(r => {
+        const tot = r.passed + r.failed + r.skipped || 1;
+        return `<div class="bar-row">
+          <div class="bar-label">${r.label}</div>
+          <div class="bar-track">
+            <span class="p" style="width:${(r.passed/tot)*100}%"></span>
+            <span class="f" style="width:${(r.failed/tot)*100}%"></span>
+            <span class="s" style="width:${(r.skipped/tot)*100}%"></span>
+          </div>
+          <div style="width:70px;text-align:right">${r.passed}✓ ${r.failed}✗</div>
+        </div>`;
+      }).join("");
+
+      // donut
+      const ctx = document.getElementById("donut").getContext("2d");
+      const segs = [
+        { n: latest.passed, c: "#3d9a6a", label: "Passed" },
+        { n: latest.failed, c: "#c45c5c", label: "Failed" },
+        { n: latest.skipped, c: "#b0893a", label: "Skipped" }
+      ].filter(s => s.n > 0);
+      const total = segs.reduce((a, s) => a + s.n, 0) || 1;
+      let ang = -Math.PI / 2;
+      segs.forEach(s => {
+        const slice = (s.n / total) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(80, 80);
+        ctx.arc(80, 80, 70, ang, ang + slice);
+        ctx.closePath();
+        ctx.fillStyle = s.c;
+        ctx.fill();
+        ang += slice;
+      });
+      ctx.beginPath();
+      ctx.fillStyle = "#1a222c";
+      ctx.arc(80, 80, 42, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#e7ecf1";
+      ctx.font = "600 18px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(`${latest.passed}/${total}`, 80, 86);
+      document.getElementById("donut-legend").innerHTML = segs.map(s =>
+        `<div><span class="swatch" style="background:${s.c}"></span>${s.label}: ${s.n}</div>`
+      ).join("");
+
+      const tb = document.querySelector("#latest-table tbody");
+      tb.innerHTML = latest.tests.map(t => `
+        <tr>
+          <td>${t.name}</td>
+          <td><span class="pill ${t.status}">${t.status}</span></td>
+          <td>${t.duration_ms != null ? t.duration_ms + " ms" : "—"}</td>
+        </tr>`).join("");
+
+      const failBody = document.querySelector("#fail-table tbody");
+      const failRows = [];
+      data.prior_runs.forEach(r => {
+        r.tests.filter(t => t.status !== "passed").forEach(t => {
+          failRows.push(`<tr>
+            <td>${r.label}<div class="muted">${r.started_at}</div></td>
+            <td>${t.name}</td>
+            <td><span class="pill ${t.status}">${t.status}</span></td>
+            <td class="muted">${t.error || "—"}</td>
+          </tr>`);
+        });
+      });
+      failBody.innerHTML = failRows.join("");
+    }
+    load().catch(err => {
+      document.body.insertAdjacentHTML("beforeend", `<pre style="color:#c45c5c;padding:20px">${err}</pre>`);
+    });
+  </script>
+</body>
+</html>

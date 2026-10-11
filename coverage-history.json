@@ -1,0 +1,71 @@
+{
+  "suite": "https://github.com/stackgen-demo/otel-astronomy-preview-e2e",
+  "target": "https://ephimeral-env-demo.dev.stackgen-demo.shipyard.host",
+  "pr": "https://github.com/stackgen-demo/ephimeral-env-demo/pull/5",
+  "build": "https://shipyard.build/application-build/d9da8e33-b9e9-43c2-b5e1-6500a361a08d/detail",
+  "latest_run": {
+    "id": "run-2026-10-11T02:54Z",
+    "label": "PR #5 Ready @ 02584fe (Aiden curl)",
+    "started_at": "2026-10-11T02:54:30Z",
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "tests": [
+      { "name": "1. home returns Otel Demo", "status": "passed", "duration_ms": 820 },
+      { "name": "2. catalog via /api/products", "status": "passed", "duration_ms": 310 },
+      { "name": "3. product detail page loads", "status": "passed", "duration_ms": 640 },
+      { "name": "4. cart page loads", "status": "passed", "duration_ms": 480 },
+      { "name": "5. frontend-proxy API products smoke", "status": "passed", "duration_ms": 290 },
+      { "name": "6. second product detail loads", "status": "passed", "duration_ms": 610 },
+      { "name": "7. cart is reachable after home navigation", "status": "passed", "duration_ms": 720 },
+      { "name": "8. product API returns priced items", "status": "passed", "duration_ms": 270 }
+    ]
+  },
+  "prior_runs": [
+    {
+      "id": "run-2026-10-11T02:51Z",
+      "label": "Ready but no HTTP runner (0/5)",
+      "started_at": "2026-10-11T02:51:45Z",
+      "passed": 0,
+      "failed": 5,
+      "skipped": 0,
+      "tests": [
+        { "name": "1. home returns Otel Demo", "status": "failed", "error": "http_request not available in session" },
+        { "name": "2. catalog via /api/products", "status": "failed", "error": "suite not executed" },
+        { "name": "3. product detail page loads", "status": "failed", "error": "suite not executed" },
+        { "name": "4. cart page loads", "status": "failed", "error": "suite not executed" },
+        { "name": "5. frontend-proxy API products smoke", "status": "failed", "error": "suite not executed" }
+      ]
+    },
+    {
+      "id": "run-2026-10-11T02:47Z",
+      "label": "Mid-build 502 (pending)",
+      "started_at": "2026-10-11T02:47:10Z",
+      "passed": 0,
+      "failed": 3,
+      "skipped": 2,
+      "tests": [
+        { "name": "1. home returns Otel Demo", "status": "failed", "error": "502 Bad Gateway — env still Building" },
+        { "name": "2. catalog via /api/products", "status": "failed", "error": "502 Bad Gateway — env still Building" },
+        { "name": "3. product detail page loads", "status": "failed", "error": "502 Bad Gateway — env still Building" },
+        { "name": "4. cart page loads", "status": "skipped", "error": "blocked on Ready" },
+        { "name": "5. frontend-proxy API products smoke", "status": "skipped", "error": "blocked on Ready" }
+      ]
+    },
+    {
+      "id": "run-2026-10-10T04:56Z",
+      "label": "CrashLoop product-catalog / otel-collector",
+      "started_at": "2026-10-10T04:56:40Z",
+      "passed": 2,
+      "failed": 3,
+      "skipped": 0,
+      "tests": [
+        { "name": "1. home returns Otel Demo", "status": "passed", "duration_ms": 900 },
+        { "name": "2. catalog via /api/products", "status": "failed", "error": "empty catalog — product-catalog CrashLoopBackOff" },
+        { "name": "3. product detail page loads", "status": "failed", "error": "no product id — catalog down" },
+        { "name": "4. cart page loads", "status": "passed", "duration_ms": 500 },
+        { "name": "5. frontend-proxy API products smoke", "status": "failed", "error": "API 503 upstream catalog" }
+      ]
+    }
+  ]
+}
